@@ -1,0 +1,39 @@
+{
+  "name": "bureaupartners/placeholder-repository",
+  "description": "Placeholder repository",
+  "keywords": [
+    "bureaupartners"
+  ],
+  "homepage": "https://github.com/bureaupartners/placeholder-repository",
+  "license": "MIT",
+  "authors": [{
+    "name": "Mark Hameetman",
+    "email": "mark@bureau.partners",
+    "homepage": "https://bureau.partners",
+    "role": "Developer"
+  }],
+  "require": {
+    "php": "^7.3"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^8.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "BureauPartners\\PlaceholderRepository\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "BureauPartners\\PlaceholderRepository\\Tests\\": "tests"
+    }
+  },
+  "scripts": {
+    "test": "vendor/bin/phpunit",
+    "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+
+  },
+  "config": {
+    "sort-packages": true
+  }
+}

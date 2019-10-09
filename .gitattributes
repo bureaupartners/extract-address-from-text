@@ -1,0 +1,34 @@
+# Ignore all test and documentation with “export-ignore”.
+.gitattributes export-ignore
+.gitignore export-ignore
+README.md export-ignore
+phpunit.xml.dist export-ignore
+/docs export-ignore
+/tests export-ignore
+
+# Do not try to merge these files
+composer.lock -diff
+yarn.lock -diff
+public/build/js/*.js -diff
+public/build/css/*.css -diff
+*.map -diff
+
+# Normalize line endings for all files that git determines to be text.
+* text=auto
+
+# Normalize line endings to LF on checkin, and do NOT convert to CRLF when checking-out on Windows.
+*.txt text eol=lf
+*.html text eol=lf
+*.md text eol=lf
+*.css text eol=lf
+*.scss text eol=lf
+*.map text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.xml text eol=lf
+*.svg text eol=lf
