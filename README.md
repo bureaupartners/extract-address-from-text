@@ -1,13 +1,12 @@
-# Placeholder repository
-
-This is a placeholder repository for BureauPartners projects
+# Extract address from text
+With this package you can extract the address from a unformatted text string
 
 ## Installation
 
-Install all composer packages
+Install composer packages
 
 ```bash
-composer require bureaupartners/placeholder-repository
+composer require bureaupartners/extract-address-from-text
 ```
 
 ## Usage

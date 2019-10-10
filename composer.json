@@ -1,10 +1,12 @@
 {
-  "name": "bureaupartners/placeholder-repository",
-  "description": "Placeholder repository",
+  "name": "bureaupartners/extract-address-from-text",
+  "description": "With this package you can extract the address from a unformatted text string",
   "keywords": [
-    "bureaupartners"
+    "bureaupartners",
+    "address",
+    "extract"
   ],
-  "homepage": "https://github.com/bureaupartners/placeholder-repository",
+  "homepage": "https://github.com/bureaupartners/extract-address-from-text",
   "license": "MIT",
   "authors": [{
     "name": "Mark Hameetman",
@@ -13,25 +15,23 @@
     "role": "Developer"
   }],
   "require": {
-    "php": "^7.3"
+    "php": "^7.2"
   },
   "require-dev": {
     "phpunit/phpunit": "^8.2"
   },
   "autoload": {
     "psr-4": {
-      "BureauPartners\\PlaceholderRepository\\": "src"
+      "BureauPartners\\ExtractAddressFromText\\": "src"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "BureauPartners\\PlaceholderRepository\\Tests\\": "tests"
+      "BureauPartners\\ExtractAddressFromText\\Tests\\": "tests"
     }
   },
   "scripts": {
-    "test": "vendor/bin/phpunit",
-    "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
-
+    "test": "vendor/bin/phpunit tests"
   },
   "config": {
     "sort-packages": true
