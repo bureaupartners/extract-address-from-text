@@ -147,40 +147,11 @@ final class AddressTest extends TestCase
             $address_lines = explode(PHP_EOL, $address['text']);
             $text          = [];
             foreach ($address_lines as $line) {
-                // add random text to lines
-                if (rand(0, 100) < 40) {
-                    $text[] = $this->generateWords(rand(1, 10));
-
-                }
                 $text[] = $line;
             }
             $address['text'] = implode(PHP_EOL, $text);
         }
         return $this->test_addresses;
-    }
-
-    private function generateWords($words = 4)
-    {
-        $string = '';
-        for ($x = 1; $x <= $words; $x++) {
-            $string .= $this->generateWord(rand(3, 6)) . ' ';
-        }
-        return trim($string);
-    }
-
-    private function generateWord($length = 6)
-    {
-        $string     = '';
-        $vowels     = array('a', 'e', 'i', 'o', 'u');
-        $consonants = array('b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z');
-
-        $max = $length / 2;
-        for ($i = 1; $i <= $max; $i++) {
-            $string .= $consonants[rand(0, 19)];
-            $string .= $vowels[rand(0, 4)];
-        }
-
-        return $string;
     }
 
     public function testExtractsStreetFromAddress(): void

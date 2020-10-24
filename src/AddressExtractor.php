@@ -14,8 +14,9 @@ class AddressExtractor
     private $country_code          = null;
     private $street_matched        = false;
 
-    // Extract zipcodes (https://rgxdb.com/r/316F0I2N)
     private $postalcode_regex_per_country = [
+        // Inspiration extract zipcodes (https://rgxdb.com/r/316F0I2N)
+
         'NL' => [
             'pattern'    => "/^((?:NL-)?(?:[1-9]\d{3} ?(?:[A-EGHJ-NPRTVWXZ][A-EGHJ-NPRSTVWXZ]|S[BCEGHJ-NPRTVWXZ]))) ([a-zA-Z \-'\.]+)/i",
             'postalcode' => 1,
@@ -33,7 +34,7 @@ class AddressExtractor
         ],
     ];
 
-    public function __construct($address, $default_country = 'NL')
+    public function __construct(string $address, string $default_country = 'NL')
     {
         $address = explode(PHP_EOL, $address);
         if (count($address) < 3) {
@@ -53,12 +54,11 @@ class AddressExtractor
             $this->determinePostalcode($address_line);
         }
         return $address;
-
     }
 
-    private function determineRecipient($address_line)
+    private function determineRecipient(string $address_line) : void
     {
-        if ($this->street_matched === false) {
+        if ($this->street_matched === false && strpos(strtolower($address_line), 'retour') === false) {
             // Check if the line contains a postalcode to be a return address
             if (preg_match("/((?:NL-)?(?:[1-9]\d{3} ?(?:[A-EGHJ-NPRTVWXZ][A-EGHJ-NPRSTVWXZ]|S[BCEGHJ-NPRTVWXZ])))/i", $address_line) === 0) {
                 $this->recipient[] = $address_line;
@@ -66,10 +66,10 @@ class AddressExtractor
         }
     }
 
-    private function determineStreet($address_line)
+    private function determineStreet(string $address_line) : void
     {
         $street_extraction_success = preg_match('/(?P<street>(.\w)+?([\w.]+)) (?P<housenumber>\d+)\s*(?P<housenumber_addition>(.)+)?/i', $address_line, $street_parts);
-        if ($street_extraction_success && count($this->recipient) > 0 && $this->street_matched === false) {
+        if ($street_extraction_success && count($this->recipient) > 0 && $this->street_matched === false && strpos(strtolower($address_line), 'retour') === false) {
             if (isset($street_parts['street'])) {
                 $this->street = $street_parts['street'];
             }
@@ -83,10 +83,9 @@ class AddressExtractor
         }
     }
 
-    private function determinePostalcode($address_line)
+    private function determinePostalcode(string $address_line): void
     {
-
-        if (key_exists($this->country_code, $this->postalcode_regex_per_country)) {
+        if (key_exists($this->country_code, $this->postalcode_regex_per_country) && strpos(strtolower($address_line), 'retour') === false) {
             if (preg_match($this->postalcode_regex_per_country[$this->country_code]['pattern'], $address_line, $matches)) {
                 if (key_exists($this->postalcode_regex_per_country[$this->country_code]['postalcode'], $matches)) {
                     $this->postalcode = $matches[$this->postalcode_regex_per_country[$this->country_code]['postalcode']];
@@ -98,7 +97,7 @@ class AddressExtractor
         }
     }
 
-    private function determineCountry($address)
+    private function determineCountry(array $address) : void
     {
         $address_lower = array_map('mb_strtolower', $address);
         foreach (json_decode(file_get_contents(__DIR__ . '/data/countries.json')) as $country_code => $country_names) {
@@ -111,37 +110,37 @@ class AddressExtractor
         }
     }
 
-    public function getRecipient()
+    public function getRecipient() : array
     {
         return $this->recipient;
     }
 
-    public function getStreet()
+    public function getStreet() : string
     {
         return trim($this->street);
     }
 
-    public function getHouseNumber()
+    public function getHouseNumber() : int
     {
-        return trim($this->house_number);
+        return intval(trim($this->house_number));
     }
 
-    public function getHouseNumberAddition()
+    public function getHouseNumberAddition() : string
     {
         return trim($this->house_number_addition);
     }
 
-    public function getCity()
+    public function getCity() : string
     {
         return trim($this->city);
     }
 
-    public function getPostalCode()
+    public function getPostalCode() : string
     {
         return preg_replace('/\s+/', '', $this->postalcode);
     }
 
-    public function getCountry()
+    public function getCountry() : array
     {
         return [
             'code' => $this->country_code,
@@ -149,7 +148,7 @@ class AddressExtractor
         ];
     }
 
-    public function getAddress()
+    public function getAddress() : array
     {
         return [
             'recipient'             => $this->getRecipient(),
