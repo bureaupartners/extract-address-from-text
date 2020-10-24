@@ -17,10 +17,10 @@
     }
   ],
   "require": {
-    "php": "^7.2",
-    "pragmarx/countries": "^0.7.0"
+    "php": "^7.2"
   },
   "require-dev": {
+    "pragmarx/countries": "^0.7.0",
     "phpunit/phpunit": "^8.2"
   },
   "autoload": {

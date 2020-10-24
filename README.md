@@ -12,7 +12,19 @@ composer require bureaupartners/extract-address-from-text
 ## Usage
 
 ```php
-echo 'hello world!';
+use BureauPartners\ExtractAddressFromText\AddressExtractor;
+
+$extractor = new AddressExtractor($address['text']);
+
+$extractor->getAddress(); // Get all information
+
+$extractor->getRecipient();
+$extractor->getStreet();
+$extractor->getHouseNumber();
+$extractor->getHouseNumberAddition();
+$extractor->getPostalCode();
+$extractor->getCity();
+$extractor->getCountry()['code'];
 ```
 
 ## Contributing

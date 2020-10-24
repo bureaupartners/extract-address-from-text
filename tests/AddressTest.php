@@ -149,7 +149,8 @@ final class AddressTest extends TestCase
             foreach ($address_lines as $line) {
                 // add random text to lines
                 if (rand(0, 100) < 40) {
-                    //    $text[] = $this->generateWords(rand(1, 10));
+                    $text[] = $this->generateWords(rand(1, 10));
+
                 }
                 $text[] = $line;
             }
@@ -186,8 +187,8 @@ final class AddressTest extends TestCase
     {
         foreach ($this->getTestAddresses() as $address) {
             $extractor = new AddressExtractor($address['text']);
-            echo implode(',', explode(PHP_EOL, $address['text'])) . PHP_EOL;
-            //print_r($extractor->getAddress());
+            echo $address['text'].PHP_EOL.'--'.PHP_EOL;
+
             $this->assertEquals($address['result']['street'], $extractor->getStreet());
             $this->assertEquals($address['result']['house_number'], $extractor->getHouseNumber());
             $this->assertEquals($address['result']['house_number_addition'], $extractor->getHouseNumberAddition());
