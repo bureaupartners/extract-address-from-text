@@ -18,17 +18,17 @@ class AddressExtractor
         // Inspiration extract zipcodes (https://rgxdb.com/r/316F0I2N)
 
         'NL' => [
-            'pattern'    => "/^((?:NL-)?(?:[1-9]\d{3} ?(?:[A-EGHJ-NPRTVWXZ][A-EGHJ-NPRSTVWXZ]|S[BCEGHJ-NPRTVWXZ]))) ([a-zA-Z \-'\.]+)/i",
+            'pattern'    => "/^((?:NL-)?(?:[1-9]\d{3} ?(?:[A-EGHJ-NPRTVWXZ][A-EGHJ-NPRSTVWXZ]|S[BCEGHJ-NPRTVWXZ]))) ([a-zA-Z \-‘'\.]+)/i",
             'postalcode' => 1,
             'city'       => 2,
         ],
         'BE' => [
-            'pattern'    => "/^((?:B-)?(?:(?:[1-9])(?:\d{3}))) ?([a-zA-Z \-'\.]+)/i",
+            'pattern'    => "/^((?:B-)?(?:(?:[1-9])(?:\d{3}))) ?([a-zA-Z \-‘'\.]+)/i",
             'postalcode' => 1,
             'city'       => 2,
         ],
         'DE' => [
-            'pattern'    => "/^((?:(?:[1-9])(?:\d{4}))) ?([a-zA-Z \-'\.]+)/i",
+            'pattern'    => "/^((?:(?:[1-9])(?:\d{4}))) ?([a-zA-Z \-‘'\.]+)/i",
             'postalcode' => 1,
             'city'       => 2,
         ],
@@ -99,10 +99,13 @@ class AddressExtractor
 
     private function determineCountry(array $address) : void
     {
-        $address_lower = array_map('mb_strtolower', $address);
+        foreach ($address as &$address_line) {
+            $address_line = mb_strtolower($address_line, 'UTF-8');
+        }
+
         foreach (json_decode(file_get_contents(__DIR__ . '/data/countries.json')) as $country_code => $country_names) {
             foreach ($country_names as $country_name) {
-                if (false !== $country_key = array_search($country_name, $address_lower)) {
+                if (false !== $country_key = array_search($country_name, $address)) {
                     $this->country_code = $country_code;
                     $this->country      = $address[$country_key];
                 }
@@ -160,5 +163,4 @@ class AddressExtractor
             'country'               => $this->getCountry(),
         ];
     }
-
 }
