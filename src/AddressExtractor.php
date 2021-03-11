@@ -101,11 +101,15 @@ class AddressExtractor
     {
         foreach ($address as &$address_line) {
             $address_line = mb_strtolower($address_line, 'UTF-8');
+            if (strlen($address_line) < 1) {
+                unset($address_line);
+            }
+
         }
 
         foreach (json_decode(file_get_contents(__DIR__ . '/data/countries.json')) as $country_code => $country_names) {
             foreach ($country_names as $country_name) {
-                if (false !== $country_key = array_search($country_name, $address)) {
+                if (strlen($country_name) > 2 && false !== $country_key = array_search($country_name, $address)) {
                     $this->country_code = $country_code;
                     $this->country      = $address[$country_key];
                 }
