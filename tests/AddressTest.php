@@ -97,7 +97,7 @@ final class AddressTest extends TestCase
         ],
         // BE
         [
-            'text'   => 'BureauPartners' . PHP_EOL . 'M. Hameetman' . PHP_EOL . 'Koningin Astridlaan 49' . PHP_EOL . '1780 Wemmel' . PHP_EOL . 'BELGIUM',
+            'text'   => 'BureauPartners' . PHP_EOL . 'M. Hameetman' . PHP_EOL . 'Koningin Astridlaan 49' . PHP_EOL . '1780 Wemmel' . PHP_EOL . 'Belgiė',
             'result' => [
                 'recipient'             => [
                     'BureauPartners',
@@ -139,6 +139,66 @@ final class AddressTest extends TestCase
                 'country'               => 'BE',
             ],
         ],
+        [
+            'text' => 'Nederlandse ambassade in Berlijn'.PHP_EOL.'Wepke Kingma'.PHP_EOL.'Klosterstraße 50'.PHP_EOL.'10179 Berlijn'.PHP_EOL.'Duitsland',
+            'result' => [
+                'recipient'             => [
+                    'Nederlandse ambassade in Berlijn',
+                    'Wepke Kingma'
+                ],
+                'street'                => 'Klosterstraße',
+                'house_number'          => '50',
+                'house_number_addition' => '',
+                'postalcode'            => '10179',
+                'city'                  => 'Berlijn',
+                'country'               => 'DE',
+            ],
+        ],
+        [
+            'text' => 'Nederlandse ambassade in Parijs'.PHP_EOL.'Pieter de Gooijer'.PHP_EOL.'Rue Eblé 7-9'.PHP_EOL.'75007 Parijs'.PHP_EOL.'France',
+            'result' => [
+                'recipient'             => [
+                    'Nederlandse ambassade in Parijs',
+                    'Pieter de Gooijer'
+                ],
+                'street'                => 'Rue Eblé',
+                'house_number'          => '7',
+                'house_number_addition' => '-9',
+                'postalcode'            => '75007',
+                'city'                  => 'Parijs',
+                'country'               => 'FR',
+            ],
+        ],
+        [
+            'text' => 'Nederlandse ambassade in Madrid'.PHP_EOL.'Jan Versteeg'.PHP_EOL.'Pº de la Castellana 259-D'.PHP_EOL.'Torre Espacio - Verdieping 36'.PHP_EOL.'28046 Madrid'.PHP_EOL.'Spanje',
+            'result' => [
+                'recipient'             => [
+                    'Nederlandse ambassade in Madrid',
+                    'Jan Versteeg'
+                ],
+                'street'                => 'Pº de la Castellana',
+                'house_number'          => '259',
+                'house_number_addition' => '-D',
+                'postalcode'            => '28046',
+                'city'                  => 'Madrid',
+                'country'               => 'ES',
+            ],
+        ],
+        [
+            'text' => 'Nederlandse ambassade in Londen'.PHP_EOL.'Karel J.G. Van Oosterom'.PHP_EOL.'38 Hyde Park Gate'.PHP_EOL.'Londen SW75DP'.PHP_EOL.'United Kingdom',
+            'result' => [
+                'recipient'             => [
+                    'Nederlandse ambassade in Madrid',
+                    'Karel J.G. Van Oosterom'
+                ],
+                'street'                => 'Hyde Park Gate',
+                'house_number'          => '38',
+                'house_number_addition' => '',
+                'postalcode'            => 'SW75DP',
+                'city'                  => 'Londen',
+                'country'               => 'GB',
+            ],
+        ]
     ];
 
     private function getTestAddresses()
@@ -158,7 +218,8 @@ final class AddressTest extends TestCase
     {
         foreach ($this->getTestAddresses() as $address) {
             $extractor = new AddressExtractor($address['text']);
-            echo $address['text'].PHP_EOL.'--'.PHP_EOL;
+            //echo $address['text'].PHP_EOL.'--'.PHP_EOL;
+            //print_r($extractor->getAddress());
 
             $this->assertEquals($address['result']['street'], $extractor->getStreet());
             $this->assertEquals($address['result']['house_number'], $extractor->getHouseNumber());

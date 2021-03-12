@@ -32,6 +32,25 @@ class AddressExtractor
             'postalcode' => 1,
             'city'       => 2,
         ],
+        'FR' => [
+            'pattern'    => "/^((?:[0-8]\d|9[0-8])\d{3}) ?([a-zA-Z \-‘'\.]+)/i",
+            'postalcode' => 1,
+            'city'       => 2,
+        ],
+        'ES' => [
+            'pattern'    => "/^((?:0[1-9]|[1-4]\d|5[0-2])\d{3}) ?([a-zA-Z \-‘'\.]+)/i",
+            'postalcode' => 1,
+            'city'       => 2,
+        ],
+        'GB' => [
+            'pattern'    => "/^(.*) (GIR 0AA|(?:(?:(?:A[BL]|B[ABDHLNRSTX]?|C[ABFHMORTVW]|D[ADEGHLNTY]|E[HNX]?|F[KY]|G[LUY]?|H[ADGPRSUX]|I[GMPV]|JE|K[ATWY]|L[ADELNSU]?|M[EKL]?|N[EGNPRW]?|O[LX]|P[AEHLOR]|R[GHM]|S[AEGK-PRSTY]?|T[ADFNQRSW]|UB|W[ADFNRSV]|YO|ZE)[1-9]?\d|(?:(?:E|N|NW|SE|SW|W)1|EC[1-4]|WC[12])[A-HJKMNPR-Y]|(?:SW|W)(?:[2-9]|[1-9]\d)|EC[1-9]\d)\d[ABD-HJLNP-UW-Z]{2}))$/i",
+            'postalcode' => 2,
+            'city'       => 1,
+        ],
+    ];
+
+    private $street_house_numer_occurrence_first_number = [
+        'GB'
     ];
 
     public function __construct(string $address, string $default_country = 'NL')
@@ -68,9 +87,17 @@ class AddressExtractor
 
     private function determineStreet(string $address_line) : void
     {
-        $street_extraction_success = preg_match('/(?P<street>(.\w)+?([\w.]+)) (?P<housenumber>\d+)\s*(?P<housenumber_addition>(.)+)?/i', $address_line, $street_parts);
+        if(!in_array($this->country_code, $this->street_house_numer_occurrence_first_number)){
+            $street_extraction_success = preg_match('/(?P<street>(.\S)+?([\S.]+)) (?P<housenumber>\d+)\s*(?P<housenumber_addition>(.)+)?/i', $address_line, $street_parts);
+        }else{
+            $street_extraction_success = preg_match('/(?P<housenumber>\d+)\s*(?P<street>(.)+)?/i', $address_line, $street_parts);
+        }
         if ($street_extraction_success && count($this->recipient) > 0 && $this->street_matched === false && strpos(strtolower($address_line), 'retour') === false) {
+
             if (isset($street_parts['street'])) {
+                if (strlen($street_parts['street']) > 2 && !in_array($this->country_code, $this->street_house_numer_occurrence_first_number)) {
+                    $street_parts['street'] = substr($address_line, 0, (strpos($address_line, $street_parts['street']) + strlen($street_parts['street'])));
+                }
                 $this->street = $street_parts['street'];
             }
             if (isset($street_parts['housenumber'])) {
@@ -115,6 +142,20 @@ class AddressExtractor
                 }
             }
         }
+
+        if($this->country == null){
+            foreach($address as &$address_line){
+                $address_line  = iconv('utf-8', 'ASCII//IGNORE//TRANSLIT', $address_line);
+            }
+            foreach (json_decode(file_get_contents(__DIR__ . '/data/countries.json')) as $country_code => $country_names) {
+                foreach ($country_names as $country_name) {
+                    if (strlen($country_name) > 2 && false !== $country_key = array_search($country_name, $address)) {
+                        $this->country_code = $country_code;
+                        $this->country      = $address[$country_key];
+                    }
+                }
+            }
+        }
     }
 
     public function getRecipient() : array
@@ -151,7 +192,7 @@ class AddressExtractor
     {
         return [
             'code' => $this->country_code,
-            'name' => $this->country,
+            'name' => ucwords($this->country),
         ];
     }
 
