@@ -88,12 +88,13 @@ class AddressExtractor
     private function determineStreet(string $address_line) : void
     {
         if(!in_array($this->country_code, $this->street_house_numer_occurrence_first_number)){
-            $street_extraction_success = preg_match('/(?P<street>(.\S)+?([\S.]+)) (?P<housenumber>\d+)\s*(?P<housenumber_addition>(.)+)?/i', $address_line, $street_parts);
+            $street_extraction_success = preg_match('/(?P<street>(.\S)+?([\S.]+)) (?P<housenumber>\d+\.?\d*)\s*(?P<housenumber_addition>(.)+)?/i', $address_line, $street_parts);
+
         }else{
-            $street_extraction_success = preg_match('/(?P<housenumber>\d+)\s*(?P<street>(.)+)?/i', $address_line, $street_parts);
+            $street_extraction_success = preg_match('/(?P<housenumber>\d+\.?\d*)\s*(?P<street>(.)+)?/i', $address_line, $street_parts);
+
         }
         if ($street_extraction_success && count($this->recipient) > 0 && $this->street_matched === false && strpos(strtolower($address_line), 'retour') === false) {
-
             if (isset($street_parts['street'])) {
                 if (strlen($street_parts['street']) > 2 && !in_array($this->country_code, $this->street_house_numer_occurrence_first_number)) {
                     $street_parts['street'] = substr($address_line, 0, (strpos($address_line, $street_parts['street']) + strlen($street_parts['street'])));
@@ -101,7 +102,8 @@ class AddressExtractor
                 $this->street = $street_parts['street'];
             }
             if (isset($street_parts['housenumber'])) {
-                $this->house_number = $street_parts['housenumber'];
+                $this->house_number = preg_replace('/\D/', '', $street_parts['housenumber']);
+
             }
             if (isset($street_parts['housenumber_addition'])) {
                 $this->house_number_addition = $street_parts['housenumber_addition'];

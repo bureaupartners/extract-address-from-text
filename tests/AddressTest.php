@@ -112,7 +112,7 @@ final class AddressTest extends TestCase
             ],
         ],
         [
-            'text'   => 'M. Hameetman' . PHP_EOL . 'Koningin Astridlaan 491 2' . PHP_EOL . 'B-1780 Wemmel' . PHP_EOL . 'België',
+            'text'   => 'M. Hameetman' . PHP_EOL . 'Koningin Astridlaan 491 2' . PHP_EOL . 'B-1780 Wemmel' . PHP_EOL . 'Belgié',
             'result' => [
                 'recipient'             => [
                     'M. Hameetman',
@@ -198,7 +198,21 @@ final class AddressTest extends TestCase
                 'city'                  => 'Londen',
                 'country'               => 'GB',
             ],
-        ]
+        ],
+        [
+            'text'   => 'M. Hameetman' . PHP_EOL . 'Pieter Zeemanweg 17.500' . PHP_EOL . '3316 GZ Dordrecht' . PHP_EOL . 'Nederland',
+            'result' => [
+                'recipient'             => [
+                    'M. Hameetman',
+                ],
+                'street'                => 'Pieter Zeemanweg',
+                'house_number'          => '17500',
+                'house_number_addition' => '',
+                'postalcode'            => '3316GZ',
+                'city'                  => 'Dordrecht',
+                'country'               => 'NL',
+            ],
+        ],
     ];
 
     private function getTestAddresses()
@@ -218,8 +232,10 @@ final class AddressTest extends TestCase
     {
         foreach ($this->getTestAddresses() as $address) {
             $extractor = new AddressExtractor($address['text']);
-            //echo $address['text'].PHP_EOL.'--'.PHP_EOL;
-            //print_r($extractor->getAddress());
+
+            echo $address['text'].PHP_EOL.'--'.PHP_EOL;
+            print_r($extractor->getAddress());
+
 
             $this->assertEquals($address['result']['street'], $extractor->getStreet());
             $this->assertEquals($address['result']['house_number'], $extractor->getHouseNumber());
