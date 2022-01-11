@@ -232,11 +232,6 @@ final class AddressTest extends TestCase
     {
         foreach ($this->getTestAddresses() as $address) {
             $extractor = new AddressExtractor($address['text']);
-
-            echo $address['text'].PHP_EOL.'--'.PHP_EOL;
-            print_r($extractor->getAddress());
-
-
             $this->assertEquals($address['result']['street'], $extractor->getStreet());
             $this->assertEquals($address['result']['house_number'], $extractor->getHouseNumber());
             $this->assertEquals($address['result']['house_number_addition'], $extractor->getHouseNumberAddition());

@@ -84,7 +84,7 @@ function clean_name($string)
     $string = utf8_to_ansi($string);
     $string = iconv("UTF-8", "ISO-8859-1//TRANSLIT//IGNORE", decode_encoded_utf8($string));
     $string = preg_replace('/\pM*/u', '', normalizer_normalize($string, Normalizer::FORM_D));
-    $string = mb_strtolower($string);
+    $string = trim(mb_strtolower($string));
     return $string;
 }
 
@@ -107,7 +107,7 @@ foreach (Countries::all() as $country) {
 
                 }
             }
-        } elseif (strlen($country->get($key)) > 1) {
+        } elseif ($country->get($key) !== null && strlen($country->get($key)) > 1) {
             $country_name = clean_name($country->get($key));
             if (
                 !is_numeric($country_name) &&
@@ -135,6 +135,31 @@ foreach (Countries::all() as $country) {
                         }
 
                     }
+                }
+            }
+        }
+        // Translations
+        if ($country->get('translations') !== null) {
+            foreach ($country->get('translations') as $language => $translations) {
+                $country_name = clean_name($translations->common);
+                if (
+                    !is_numeric($country_name) &&
+                    strlen($country_name) > 2 &&
+                    !in_array($country_name, $countries[$country->get('cca2')]) &&
+                    mb_detect_encoding($country_name, 'UTF-8', true)
+
+                ) {
+                    $countries[$country->get('cca2')][] = $country_name;
+                }
+                $country_name = clean_name($translations->official);
+                if (
+                    !is_numeric($country_name) &&
+                    strlen($country_name) > 2 &&
+                    !in_array($country_name, $countries[$country->get('cca2')]) &&
+                    mb_detect_encoding($country_name, 'UTF-8', true)
+
+                ) {
+                    $countries[$country->get('cca2')][] = $country_name;
                 }
             }
         }
