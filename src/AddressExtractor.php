@@ -66,11 +66,14 @@ class AddressExtractor
         $this->determineCountry($address);
         foreach ($address as $address_line) {
             // Determine street and housenumber
-            $this->determineStreet($address_line);
-            // Determine recipient
-            $this->determineRecipient($address_line);
-            // Determine postalcode
-            $this->determinePostalcode($address_line);
+            if($this->isReturnAddress($address_line) === false){
+                //Determine street and housenumber
+                $this->determineStreet($address_line);
+                // Determine recipient
+                $this->determineRecipient($address_line);
+                // Determine postalcode
+                $this->determinePostalcode($address_line);
+            }
         }
         return $address;
     }
@@ -83,6 +86,16 @@ class AddressExtractor
                 $this->recipient[] = $address_line;
             }
         }
+    }
+
+    private function isReturnAddress(string $address_line) : bool
+    {
+        // Only dutch return addresses are supported at the moment
+        $return_address = preg_match('/(?P<street>(.\S)+?([\S.]+)) (?P<housenumber>\d+\.?\d*), (?P<postalcode>[1-9][0-9]{3} ?(?!sa|sd|ss)[a-z]{2}) (?P<city>(.\S)+?([\S.]+))?/i', $address_line, $return_address_parts);
+        if($return_address_parts !== array()){
+            return true;
+        }
+        return false;
     }
 
     private function determineStreet(string $address_line) : void
@@ -180,7 +193,7 @@ class AddressExtractor
 
     public function getHouseNumberAddition() : string
     {
-        return trim($this->house_number_addition);
+        return trim((string) $this->house_number_addition);
     }
 
     public function getCity() : string
@@ -197,7 +210,7 @@ class AddressExtractor
     {
         return [
             'code' => $this->country_code,
-            'name' => ucwords($this->country),
+            'name' => ucwords((string) $this->country),
         ];
     }
 
