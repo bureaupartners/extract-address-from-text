@@ -1,5 +1,7 @@
 <?php
-declare (strict_types = 1);
+
+declare(strict_types=1);
+
 namespace BureauPartners\ExtractAddressFromText\Tests;
 
 use BureauPartners\ExtractAddressFromText\AddressExtractor;
@@ -140,7 +142,7 @@ final class AddressTest extends TestCase
             ],
         ],
         [
-            'text' => 'Nederlandse ambassade in Berlijn'.PHP_EOL.'Wepke Kingma'.PHP_EOL.'Klosterstraße 50'.PHP_EOL.'10179 Berlijn'.PHP_EOL.'Duitsland',
+            'text' => 'Nederlandse ambassade in Berlijn' . PHP_EOL . 'Wepke Kingma' . PHP_EOL . 'Klosterstraße 50' . PHP_EOL . '10179 Berlijn' . PHP_EOL . 'Duitsland',
             'result' => [
                 'recipient'             => [
                     'Nederlandse ambassade in Berlijn',
@@ -155,7 +157,7 @@ final class AddressTest extends TestCase
             ],
         ],
         [
-            'text' => 'Nederlandse ambassade in Parijs'.PHP_EOL.'Pieter de Gooijer'.PHP_EOL.'Rue Eblé 7-9'.PHP_EOL.'75007 Parijs'.PHP_EOL.'France',
+            'text' => 'Nederlandse ambassade in Parijs' . PHP_EOL . 'Pieter de Gooijer' . PHP_EOL . 'Rue Eblé 7-9' . PHP_EOL . '75007 Parijs' . PHP_EOL . 'France',
             'result' => [
                 'recipient'             => [
                     'Nederlandse ambassade in Parijs',
@@ -170,7 +172,7 @@ final class AddressTest extends TestCase
             ],
         ],
         [
-            'text' => 'Nederlandse ambassade in Madrid'.PHP_EOL.'Jan Versteeg'.PHP_EOL.'Pº de la Castellana 259-D'.PHP_EOL.'Torre Espacio - Verdieping 36'.PHP_EOL.'28046 Madrid'.PHP_EOL.'Spanje',
+            'text' => 'Nederlandse ambassade in Madrid' . PHP_EOL . 'Jan Versteeg' . PHP_EOL . 'Pº de la Castellana 259-D' . PHP_EOL . 'Torre Espacio - Verdieping 36' . PHP_EOL . '28046 Madrid' . PHP_EOL . 'Spanje',
             'result' => [
                 'recipient'             => [
                     'Nederlandse ambassade in Madrid',
@@ -185,7 +187,7 @@ final class AddressTest extends TestCase
             ],
         ],
         [
-            'text' => 'Nederlandse ambassade in Londen'.PHP_EOL.'Karel J.G. Van Oosterom'.PHP_EOL.'38 Hyde Park Gate'.PHP_EOL.'Londen SW75DP'.PHP_EOL.'United Kingdom',
+            'text' => 'Nederlandse ambassade in Londen' . PHP_EOL . 'Karel J.G. Van Oosterom' . PHP_EOL . '38 Hyde Park Gate' . PHP_EOL . 'Londen SW75DP' . PHP_EOL . 'United Kingdom',
             'result' => [
                 'recipient'             => [
                     'Nederlandse ambassade in Madrid',
@@ -213,6 +215,48 @@ final class AddressTest extends TestCase
                 'country'               => 'NL',
             ],
         ],
+        [
+            'text'   => 'Postbus 1234, 1234AB Utrecht' . PHP_EOL . 'M. Hameetman' . PHP_EOL . 'Pieter Zeemanweg 17.500' . PHP_EOL . '3316 GZ Dordrecht' . PHP_EOL . 'Nederland',
+            'result' => [
+                'recipient'             => [
+                    'M. Hameetman',
+                ],
+                'street'                => 'Pieter Zeemanweg',
+                'house_number'          => '17500',
+                'house_number_addition' => '',
+                'postalcode'            => '3316GZ',
+                'city'                  => 'Dordrecht',
+                'country'               => 'NL',
+            ],
+        ],
+        [
+            'text'   => '12343787292034' . PHP_EOL . 'Postbus 1234, 1234AB Utrecht' . PHP_EOL . 'M. Hameetman' . PHP_EOL . 'Pieter Zeemanweg 17.500' . PHP_EOL . '3316 GZ Dordrecht' . PHP_EOL . 'Nederland',
+            'result' => [
+                'recipient'             => [
+                    'M. Hameetman',
+                ],
+                'street'                => 'Pieter Zeemanweg',
+                'house_number'          => '17500',
+                'house_number_addition' => '',
+                'postalcode'            => '3316GZ',
+                'city'                  => 'Dordrecht',
+                'country'               => 'NL',
+            ],
+        ],
+        [
+            'text'   => '12343787292034' . PHP_EOL . 'Postbus 1234, 1234AB Utrecht' . PHP_EOL . 'M. Hameetman' . PHP_EOL . 'Pieter Zeemanweg 17.500' . PHP_EOL . '3316 GZ, Dordrecht' . PHP_EOL . 'Nederland',
+            'result' => [
+                'recipient'             => [
+                    'M. Hameetman',
+                ],
+                'street'                => 'Pieter Zeemanweg',
+                'house_number'          => '17500',
+                'house_number_addition' => '',
+                'postalcode'            => '3316GZ',
+                'city'                  => 'Dordrecht',
+                'country'               => 'NL',
+            ],
+        ]
     ];
 
     private function getTestAddresses()
