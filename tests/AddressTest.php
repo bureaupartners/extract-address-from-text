@@ -13,7 +13,7 @@ final class AddressTest extends TestCase
     private $test_addresses = [
         // NL
         [
-            'text'   => 'BureauPartners B.V.' . PHP_EOL . 'M. Hameetman' . PHP_EOL . 'Pieter Zeemanweg 175' . PHP_EOL . '3316GZ Dordrecht',
+            'text'   => 'BureauPartners B.V.' . PHP_EOL . 'M. Hameetman' . PHP_EOL . 'Pieter Zeemanweg 175' . PHP_EOL . '3316DD Dordrecht',
             'result' => [
                 'recipient'             => [
                     'BureauPartners B.V.',
@@ -22,13 +22,13 @@ final class AddressTest extends TestCase
                 'street'                => 'Pieter Zeemanweg',
                 'house_number'          => '175',
                 'house_number_addition' => '',
-                'postalcode'            => '3316GZ',
+                'postalcode'            => '3316DD',
                 'city'                  => 'Dordrecht',
                 'country'               => 'NL',
             ],
         ],
         [
-            'text'   => 'M. Hameetman' . PHP_EOL . 'Pieter Zeemanweg 175' . PHP_EOL . '3316GZ Dordrecht',
+            'text'   => 'M. Hameetman' . PHP_EOL . 'Pieter Zeemanweg 175' . PHP_EOL . '3316CC Dordrecht',
             'result' => [
                 'recipient'             => [
                     'M. Hameetman',
@@ -36,13 +36,13 @@ final class AddressTest extends TestCase
                 'street'                => 'Pieter Zeemanweg',
                 'house_number'          => '175',
                 'house_number_addition' => '',
-                'postalcode'            => '3316GZ',
+                'postalcode'            => '3316CC',
                 'city'                  => 'Dordrecht',
                 'country'               => 'NL',
             ],
         ],
         [
-            'text'   => 'Retouradres Postbus 8090, 3300AA Dordrecht' . PHP_EOL . 'M. Hameetman' . PHP_EOL . 'Pieter Zeemanweg 175' . PHP_EOL . '3316GZ Dordrecht',
+            'text'   => 'Retouradres Postbus 8090, 3300AA Dordrecht' . PHP_EOL . 'M. Hameetman' . PHP_EOL . 'Pieter Zeemanweg 175' . PHP_EOL . '3316BB Dordrecht',
             'result' => [
                 'recipient'             => [
                     'M. Hameetman',
@@ -50,13 +50,13 @@ final class AddressTest extends TestCase
                 'street'                => 'Pieter Zeemanweg',
                 'house_number'          => '175',
                 'house_number_addition' => '',
-                'postalcode'            => '3316GZ',
+                'postalcode'            => '3316BB',
                 'city'                  => 'Dordrecht',
                 'country'               => 'NL',
             ],
         ],
         [
-            'text'   => 'M. Hameetman' . PHP_EOL . 'Pieter Zeemanweg 175 A' . PHP_EOL . '3316 GZ Dordrecht' . PHP_EOL . 'Nederland',
+            'text'   => 'M. Hameetman' . PHP_EOL . 'Pieter Zeemanweg 175 A' . PHP_EOL . '3316 AA Dordrecht' . PHP_EOL . 'Nederland',
             'result' => [
                 'recipient'             => [
                     'M. Hameetman',
@@ -64,7 +64,7 @@ final class AddressTest extends TestCase
                 'street'                => 'Pieter Zeemanweg',
                 'house_number'          => '175',
                 'house_number_addition' => 'A',
-                'postalcode'            => '3316GZ',
+                'postalcode'            => '3316AA',
                 'city'                  => 'Dordrecht',
                 'country'               => 'NL',
             ],
@@ -244,7 +244,7 @@ final class AddressTest extends TestCase
             ],
         ],
         [
-            'text'   => '12343787292034' . PHP_EOL . 'Postbus 1234, 1234AB Utrecht' . PHP_EOL . 'M. Hameetman' . PHP_EOL . 'Pieter Zeemanweg 17.500' . PHP_EOL . '3316 GZ, Dordrecht' . PHP_EOL . 'Nederland',
+            'text'   => '12343787292034' . PHP_EOL . 'Postbus 1234, 1234AB Utrecht' . PHP_EOL . 'M. Hameetman' . PHP_EOL . 'Pieter Zeemanweg 17.500' . PHP_EOL . '3316 HH, Dordrecht' . PHP_EOL . 'Nederland',
             'result' => [
                 'recipient'             => [
                     'M. Hameetman',
@@ -252,8 +252,22 @@ final class AddressTest extends TestCase
                 'street'                => 'Pieter Zeemanweg',
                 'house_number'          => '17500',
                 'house_number_addition' => '',
-                'postalcode'            => '3316GZ',
+                'postalcode'            => '3316HH',
                 'city'                  => 'Dordrecht',
+                'country'               => 'NL',
+            ],
+        ],
+        [
+            'text'   => 'M. Hameetman' . PHP_EOL . 'Pieter Zeemanweg 175' . PHP_EOL . '3316 DD Den Helder' . PHP_EOL . 'NL',
+            'result' => [
+                'recipient'             => [
+                    'M. Hameetman',
+                ],
+                'street'                => 'Pieter Zeemanweg',
+                'house_number'          => '175',
+                'house_number_addition' => '',
+                'postalcode'            => '3316DD',
+                'city'                  => 'Den Helder',
                 'country'               => 'NL',
             ],
         ]

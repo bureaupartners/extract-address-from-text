@@ -18,27 +18,27 @@ class AddressExtractor
         // Inspiration extract zipcodes (https://rgxdb.com/r/316F0I2N)
 
         'NL' => [
-            'pattern'    => "/^((?:NL-)?(?:[1-9]\d{3} ?(?:[A-EGHJ-NPRTVWXZ][A-EGHJ-NPRSTVWXZ]|S[BCEGHJ-NPRTVWXZ])))(.*) ([a-zA-Z \-‘'\.]+)/i",
+            'pattern'    => "/^((?:NL-)?(?:[1-9]\d{3} ?(?:[A-EGHJ-NPRTVWXZ][A-EGHJ-NPRSTVWXZ]|S[BCEGHJ-NPRTVWXZ])))([,.]?) ([a-zA-Z \-‘'\.]+)/i",
             'postalcode' => 1,
             'city'       => 3,
         ],
         'BE' => [
-            'pattern'    => "/^((?:B-)?(?:(?:[1-9])(?:\d{3})))(.*) ([a-zA-Z \-‘'\.]+)/i",
+            'pattern'    => "/^((?:B-)?(?:(?:[1-9])(?:\d{3})))([,.]?) ([a-zA-Z \-‘'\.]+)/i",
             'postalcode' => 1,
             'city'       => 3,
         ],
         'DE' => [
-            'pattern'    => "/^((?:(?:[1-9])(?:\d{4})))(.*) ([a-zA-Z \-‘'\.]+)/i",
+            'pattern'    => "/^((?:(?:[1-9])(?:\d{4})))([,.]?) ([a-zA-Z \-‘'\.]+)/i",
             'postalcode' => 1,
             'city'       => 3,
         ],
         'FR' => [
-            'pattern'    => "/^((?:[0-8]\d|9[0-8])\d{3})(.*) ([a-zA-Z \-‘'\.]+)/i",
+            'pattern'    => "/^((?:[0-8]\d|9[0-8])\d{3})([,.]?) ([a-zA-Z \-‘'\.]+)/i",
             'postalcode' => 1,
             'city'       => 3,
         ],
         'ES' => [
-            'pattern'    => "/^((?:0[1-9]|[1-4]\d|5[0-2])\d{3})(.*) ([a-zA-Z \-‘'\.]+)/i",
+            'pattern'    => "/^((?:0[1-9]|[1-4]\d|5[0-2])\d{3})([,.]?) ([a-zA-Z \-‘'\.]+)/i",
             'postalcode' => 1,
             'city'       => 3,
         ],
