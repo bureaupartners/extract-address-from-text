@@ -20,7 +20,7 @@
     "php": "^7.2 | ^8.0"
   },
   "require-dev": {
-    "pragmarx/countries": "^0.7.2",
+    "pragmarx/countries": "^0.8",
     "phpunit/phpunit": "^8.2"
   },
   "autoload": {
