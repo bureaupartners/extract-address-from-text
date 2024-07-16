@@ -230,6 +230,20 @@ final class AddressTest extends TestCase
             ],
         ],
         [
+            'text'   => 'M. Hameetman' . PHP_EOL . 'Rúa Fonte 99' . PHP_EOL . '15630 Mino' . PHP_EOL . 'España',
+            'result' => [
+                'recipient'             => [
+                    'M. Hameetman',
+                ],
+                'street'                => 'Rúa Fonte',
+                'house_number'          => '99',
+                'house_number_addition' => '',
+                'postalcode'            => '15630',
+                'city'                  => 'Mino',
+                'country'               => 'ES',
+            ],
+        ],
+        [
             'text'   => '12343787292034' . PHP_EOL . 'Postbus 1234, 1234AB Utrecht' . PHP_EOL . 'M. Hameetman' . PHP_EOL . 'Pieter Zeemanweg 17.500' . PHP_EOL . '3316 GZ Dordrecht' . PHP_EOL . 'Nederland',
             'result' => [
                 'recipient'             => [
@@ -290,6 +304,7 @@ final class AddressTest extends TestCase
     {
         foreach ($this->getTestAddresses() as $address) {
             $extractor = new AddressExtractor($address['text']);
+            print_r($extractor->getAddress());
             $this->assertEquals($address['result']['street'], $extractor->getStreet());
             $this->assertEquals($address['result']['house_number'], $extractor->getHouseNumber());
             $this->assertEquals($address['result']['house_number_addition'], $extractor->getHouseNumberAddition());
