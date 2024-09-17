@@ -64,7 +64,7 @@ class AddressExtractor
         }
         // Determine country
         $this->determineCountry($address);
-        foreach ($address as $address_line) {
+        foreach ($address as $key => $address_line) {
             // Determine street and housenumber
             if($this->isReturnAddress($address_line) === false){
                 //Determine street and housenumber
@@ -73,6 +73,9 @@ class AddressExtractor
                 $this->determineRecipient($address_line);
                 // Determine postalcode
                 $this->determinePostalcode($address_line);
+                if($this->postalcode !== null){
+                    $this->determineCountry($address);
+                }
             }
         }
         return $address;
