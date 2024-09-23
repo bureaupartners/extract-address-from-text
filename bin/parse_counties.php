@@ -144,7 +144,7 @@ function utf8_to_ansi($string)
 }
 
 foreach (Countries::all() as $country) {
-    $countries[$country->get('cca2')] = [$country->get('cca2')];
+    $countries[$country->get('cca2')] = [strtolower($country->get('cca2'))];
 
     $native_names = $country->get('name.native');
     if ($native_names !== null) {

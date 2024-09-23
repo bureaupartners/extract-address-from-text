@@ -155,7 +155,7 @@ class AddressExtractor
 
         foreach (json_decode(file_get_contents(__DIR__ . '/data/countries.json')) as $country_code => $country_names) {
             foreach ($country_names as $country_name) {
-                if (strlen($country_name) > 2 && false !== $country_key = array_search($country_name, $address)) {
+                if (strlen($country_name) > 1 && false !== $country_key = array_search($country_name, $address)) {
 
                     $this->country_code = $country_code;
                     $this->country      = $address[$country_key];
@@ -170,7 +170,7 @@ class AddressExtractor
             }
             foreach (json_decode(file_get_contents(__DIR__ . '/data/countries.json')) as $country_code => $country_names) {
                 foreach ($country_names as $country_name) {
-                    if (strlen($country_name) > 2 && false !== $country_key = array_search($country_name, $address)) {
+                    if (strlen($country_name) > 1 && false !== $country_key = array_search($country_name, $address)) {
                         $this->country_code = $country_code;
                         $this->country      = $address[$country_key];
                     }

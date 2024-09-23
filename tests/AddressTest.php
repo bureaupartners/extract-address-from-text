@@ -284,6 +284,20 @@ final class AddressTest extends TestCase
                 'city'                  => 'Den Helder',
                 'country'               => 'NL',
             ],
+        ],
+        [
+            'text'   => 'M. Hameetman' . PHP_EOL . 'Rúa Fonte 99' . PHP_EOL . '15630 Mino' . PHP_EOL . 'ES',
+            'result' => [
+                'recipient'             => [
+                    'M. Hameetman',
+                ],
+                'street'                => 'Rúa Fonte',
+                'house_number'          => '99',
+                'house_number_addition' => '',
+                'postalcode'            => '15630',
+                'city'                  => 'Mino',
+                'country'               => 'ES',
+            ],
         ]
     ];
 
