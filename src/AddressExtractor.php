@@ -104,7 +104,7 @@ class AddressExtractor
     private function determineStreet(string $address_line) : void
     {
         if(!in_array($this->country_code, $this->street_house_numer_occurrence_first_number)){
-            $street_extraction_success = preg_match('/(?P<street>(.\S)+?([\S.]+)) (?P<housenumber>\d+\.?\d*)\s*(?P<housenumber_addition>(.)+)?/i', $address_line, $street_parts);
+            $street_extraction_success = preg_match('/(?P<street>[^\d]+)\s*(?P<housenumber>\d+\.?\d*)\s*(?P<housenumber_addition>(.)+)?/i', $address_line, $street_parts);
 
         }else{
             $street_extraction_success = preg_match('/(?P<housenumber>\d+\.?\d*)\s*(?P<street>(.)+)?/i', $address_line, $street_parts);
