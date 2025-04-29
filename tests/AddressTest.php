@@ -172,7 +172,7 @@ final class AddressTest extends TestCase
             ],
         ],
         [
-            'text' => 'Nederlandse ambassade in Madrid' . PHP_EOL . 'Jan Versteeg' . PHP_EOL . 'Pº de la Castellana 259-D' . PHP_EOL . 'Torre Espacio - Verdieping 36' . PHP_EOL . '28046 Madrid' . PHP_EOL . 'Spanje',
+            'text' => 'Nederlandse ambassade in Madrid' . PHP_EOL . 'Jan Versteeg' . PHP_EOL . 'Torre Espacio - Verdieping 36'.PHP_EOL.'Pº de la Castellana 259-D' . PHP_EOL . '28046 Madrid' . PHP_EOL . 'Spanje',
             'result' => [
                 'recipient'             => [
                     'Nederlandse ambassade in Madrid',
@@ -282,6 +282,21 @@ final class AddressTest extends TestCase
                 'house_number_addition' => '',
                 'postalcode'            => '3316DD',
                 'city'                  => 'Den Helder',
+                'country'               => 'NL',
+            ],
+        ],
+        [
+            'text'   => 'M. Hameetman' . PHP_EOL . 't.a.v.Hameetman3h' . PHP_EOL . 'Pieter Zeemanweg175' . PHP_EOL . '3316DD\'S-GRAVENHAGE' . PHP_EOL . 'NL',
+            'result' => [
+                'recipient'             => [
+                    'M. Hameetman',
+                    't.a.v.Hameetman3h'
+                ],
+                'street'                => 'Pieter Zeemanweg',
+                'house_number'          => '175',
+                'house_number_addition' => '',
+                'postalcode'            => '3316DD',
+                'city'                  => '\'S-GRAVENHAGE',
                 'country'               => 'NL',
             ],
         ],
