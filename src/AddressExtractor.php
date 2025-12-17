@@ -66,6 +66,7 @@ class AddressExtractor
         }
         // Determine country
         $this->determineCountry($address);
+
         foreach ($address as $key => $address_line) {
             // Determine street and housenumber
             if ($this->isReturnAddress($address_line) === false) {
@@ -111,7 +112,7 @@ class AddressExtractor
         } else {
             $street_extraction_success = preg_match('/(?P<housenumber>\d+\.?\d*)\s*(?P<street>(.)+)?/i', $address_line, $street_parts);
         }
-        if ($street_extraction_success && count($this->recipient) > 0 && strpos(strtolower($address_line), 'retour') === false) {
+        if ($street_extraction_success && strpos(strtolower($address_line), 'retour') === false) {
             $street = '';
             $house_number = '';
             $house_number_addition = '';
@@ -136,10 +137,11 @@ class AddressExtractor
         }
     }
 
-    private function determineFinalStreet() {
+    private function determineFinalStreet()
+    {
         $possible_streets = array_reverse($this->possible_streets, true);
-        foreach($possible_streets AS $address_line_key => $possible_street){
-            if($this->postalcode_line > $address_line_key && $this->street === null){
+        foreach ($possible_streets as $address_line_key => $possible_street) {
+            if ($this->postalcode_line > $address_line_key && $this->street === null) {
                 $this->street = $possible_street['street'];
                 $this->house_number = $possible_street['house_number'];
                 $this->house_number_addition = $possible_street['house_number_addition'];

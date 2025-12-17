@@ -172,7 +172,7 @@ final class AddressTest extends TestCase
             ],
         ],
         [
-            'text' => 'Nederlandse ambassade in Madrid' . PHP_EOL . 'Jan Versteeg' . PHP_EOL . 'Torre Espacio - Verdieping 36'.PHP_EOL.'Pº de la Castellana 259-D' . PHP_EOL . '28046 Madrid' . PHP_EOL . 'Spanje',
+            'text' => 'Nederlandse ambassade in Madrid' . PHP_EOL . 'Jan Versteeg' . PHP_EOL . 'Torre Espacio - Verdieping 36' . PHP_EOL . 'Pº de la Castellana 259-D' . PHP_EOL . '28046 Madrid' . PHP_EOL . 'Spanje',
             'result' => [
                 'recipient'             => [
                     'Nederlandse ambassade in Madrid',
