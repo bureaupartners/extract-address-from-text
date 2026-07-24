@@ -6,9 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-07-24
+
 ### Added
-- Dummy added
+- Riskkix support for Dutch addresses: street names ending in a number (e.g.
+  "Punter 34", "Plein 1940-1945") are kept intact instead of the trailing number
+  being read as the house number, based on per-postalcode data.
+- `bin/parse_riskkix.php` generator that builds `src/data/riskkix.json` from
+  `src/riskkix/riskkix.txt`.
+
 ### Changed
-- Dummy
-### Removed
-- Dummy
+- Updated development dependencies: PHPUnit 8 → 13 and pragmarx/countries 0.8 → 1.0
+  (added illuminate/support, required by the countries generator).
+- Migrated `phpunit.xml.dist` to the PHPUnit 10+ configuration schema.

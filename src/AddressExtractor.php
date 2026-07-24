@@ -16,6 +16,8 @@ class AddressExtractor
     private $street_matched        = false;
     private $possible_streets      = [];
 
+    private static $riskkix_numbers = null;
+
     private $postalcode_regex_per_country = [
         // Inspiration extract zipcodes (https://rgxdb.com/r/316F0I2N)
 
@@ -133,6 +135,7 @@ class AddressExtractor
                 'street'                => $street,
                 'house_number'          => $house_number,
                 'house_number_addition' => $house_number_addition,
+                'line'                  => $address_line,
             ];
         }
     }
@@ -145,8 +148,83 @@ class AddressExtractor
                 $this->street = $possible_street['street'];
                 $this->house_number = $possible_street['house_number'];
                 $this->house_number_addition = $possible_street['house_number_addition'];
+
+                // Correct street names that end in a number (e.g. "Punter 34",
+                // "Plein 1940-1945") using the riskkix data for this postalcode.
+                if (!in_array($this->country_code, $this->street_house_numer_occurrence_first_number)) {
+                    $riskkix = $this->applyRiskkix(
+                        $possible_street['line'],
+                        $this->getRiskkixNumbers((string) $this->postalcode)
+                    );
+                    if ($riskkix !== null) {
+                        $this->street = $riskkix['street'];
+                        $this->house_number = $riskkix['house_number'];
+                        $this->house_number_addition = $riskkix['house_number_addition'];
+                    }
+                }
             }
         }
+    }
+
+    /**
+     * Returns the number(s) that are part of the street name for the given
+     * postalcode and must not be read as a house number.
+     */
+    private function getRiskkixNumbers(string $postalcode): array
+    {
+        if (self::$riskkix_numbers === null) {
+            $path = __DIR__ . '/data/riskkix.json';
+            self::$riskkix_numbers = is_file($path)
+                ? json_decode(file_get_contents($path), true)
+                : [];
+        }
+        $key = strtoupper(preg_replace('/\s+/', '', $postalcode));
+        return self::$riskkix_numbers[$key] ?? [];
+    }
+
+    /**
+     * Re-interprets a street line, folding any leading number that belongs to the
+     * street name (per $ignore) into the street and taking the next number as the
+     * house number. Returns null when there is nothing to correct.
+     */
+    private function applyRiskkix(string $line, array $ignore): ?array
+    {
+        if (empty($ignore)) {
+            return null;
+        }
+        if (!preg_match_all('/\d+/', $line, $matches, PREG_OFFSET_CAPTURE)) {
+            return null;
+        }
+
+        $street_end = null;
+        $house_number = null;
+        $house_number_offset = null;
+        $house_number_length = 0;
+        foreach ($matches[0] as $match) {
+            list($number, $offset) = $match;
+            if (in_array($number, $ignore, true)) {
+                // Part of the street name.
+                $street_end = $offset + strlen($number);
+                continue;
+            }
+            // First number that is not ignored: this is the house number.
+            $house_number = $number;
+            $house_number_offset = $offset;
+            $house_number_length = strlen($number);
+            break;
+        }
+
+        // No number was folded into the street, or everything was ignored: leave as is.
+        if ($street_end === null || $house_number === null) {
+            return null;
+        }
+
+        $addition = substr($line, $house_number_offset + $house_number_length);
+        return [
+            'street'                => trim(substr($line, 0, $street_end)),
+            'house_number'          => $house_number,
+            'house_number_addition' => trim($addition),
+        ];
     }
 
     private function determinePostalcode(string $address_line, int $address_line_key = 0): void

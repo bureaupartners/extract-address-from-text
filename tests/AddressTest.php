@@ -286,6 +286,49 @@ final class AddressTest extends TestCase
             ],
         ],
         [
+            'text'   => 'M. Hameetman' . PHP_EOL . 'Punter 34 7' . PHP_EOL . '8242ER Lelystad' . PHP_EOL . 'NL',
+            'result' => [
+                'recipient'             => [
+                    'M. Hameetman',
+                ],
+                'street'                => 'Punter 34',
+                'house_number'          => '7',
+                'house_number_addition' => '',
+                'postalcode'            => '8242ER',
+                'city'                  => 'Lelystad',
+                'country'               => 'NL',
+            ],
+        ],
+        [
+            'text'   => 'M. Hameetman' . PHP_EOL . 'Plein 1940-1945 12' . PHP_EOL . '1063KP Amsterdam' . PHP_EOL . 'NL',
+            'result' => [
+                'recipient'             => [
+                    'M. Hameetman',
+                ],
+                'street'                => 'Plein 1940-1945',
+                'house_number'          => '12',
+                'house_number_addition' => '',
+                'postalcode'            => '1063KP',
+                'city'                  => 'Amsterdam',
+                'country'               => 'NL',
+            ],
+        ],
+
+        [
+            'text'   => 'M. Hameetman' . PHP_EOL . 'Plein 1940-1945 7' . PHP_EOL . '7461MC Rijssen' . PHP_EOL . 'NL',
+            'result' => [
+                'recipient'             => [
+                    'M. Hameetman',
+                ],
+                'street'                => 'Plein 1940-1945',
+                'house_number'          => '7',
+                'house_number_addition' => '',
+                'postalcode'            => '7461MC',
+                'city'                  => 'Rijssen',
+                'country'               => 'NL',
+            ],
+        ],
+        [
             'text'   => 'M. Hameetman' . PHP_EOL . 't.a.v.Hameetman3h' . PHP_EOL . 'Pieter Zeemanweg175' . PHP_EOL . '3316DD\'S-GRAVENHAGE' . PHP_EOL . 'NL',
             'result' => [
                 'recipient'             => [
