@@ -5,7 +5,9 @@ namespace BureauPartners\ExtractAddressFromText;
 class AddressExtractor
 {
     private $recipient             = [];
+    private $recipient_lines       = [];
     private $street                = null;
+    private $street_line           = null;
     private $house_number          = null;
     private $house_number_addition = null;
     private $postalcode            = null;
@@ -13,7 +15,6 @@ class AddressExtractor
     private $city                  = null;
     private $country               = null;
     private $country_code          = null;
-    private $street_matched        = false;
     private $possible_streets      = [];
 
     private static $riskkix_numbers = null;
@@ -74,8 +75,8 @@ class AddressExtractor
             if ($this->isReturnAddress($address_line) === false) {
                 //Determine street and housenumber
                 $this->determineStreet($address_line, $key);
-                // Determine recipient
-                $this->determineRecipient($address_line);
+                // Collect the line as a possible recipient line
+                $this->collectRecipientLine($address_line, $key);
                 // Determine postalcode
                 $this->determinePostalcode($address_line, $key);
                 if ($this->postalcode !== null) {
@@ -84,16 +85,61 @@ class AddressExtractor
             }
         }
         $this->determineFinalStreet();
+        $this->determineFinalRecipient();
         return $address;
     }
 
-    private function determineRecipient(string $address_line): void
+    /**
+     * Remembers a line that could be part of the addressee.
+     *
+     * Which lines actually are the addressee cannot be decided here: that
+     * depends on where the street line turns out to be, and that is only known
+     * after determineFinalStreet(). See determineFinalRecipient().
+     */
+    private function collectRecipientLine(string $address_line, int $address_line_key): void
     {
-        if ($this->street_matched === false && strpos(strtolower($address_line), 'retour') === false) {
-            // Check if the line contains a postalcode to be a return address
-            if (preg_match("/((?:NL-)?(?:[1-9]\d{3} ?(?:[A-EGHJ-NPRTVWXZ][A-EGHJ-NPRSTVWXZ]|S[BCEGHJ-NPRTVWXZ])))/i", $address_line) === 0) {
-                $this->recipient[] = $address_line;
+        if (strpos(strtolower($address_line), 'retour') !== false) {
+            return;
+        }
+        // A line without a single letter (a barcode or a sequence number, for
+        // example) is never an addressee.
+        if (preg_match('/\pL/u', $address_line) === 0) {
+            return;
+        }
+        // Check if the line contains a postalcode to be a return address
+        if (preg_match("/((?:NL-)?(?:[1-9]\d{3} ?(?:[A-EGHJ-NPRTVWXZ][A-EGHJ-NPRSTVWXZ]|S[BCEGHJ-NPRTVWXZ])))/i", $address_line) !== 0) {
+            return;
+        }
+        $this->recipient_lines[$address_line_key] = $address_line;
+    }
+
+    /**
+     * The addressee is everything above the street line.
+     *
+     * Deciding this per line while looping (on the first line that looks like a
+     * street) loses the addressee whenever a name itself contains a number:
+     * "XYZ P20 B.V." reads as street "XYZ P" with house number 20, after
+     * which no addressee line is collected at all. determineFinalStreet() has
+     * already picked the real street line by now, so use that as the boundary,
+     * and fall back to the postalcode line when there is no street.
+     */
+    private function determineFinalRecipient(): void
+    {
+        $boundary = $this->street_line;
+        if ($boundary === null) {
+            $boundary = $this->postalcode_line;
+        }
+        if ($boundary === null && $this->possible_streets !== []) {
+            // No postalcode and no street: keep the old cut-off at the first
+            // line that looked like a street.
+            $boundary = array_key_first($this->possible_streets);
+        }
+
+        foreach ($this->recipient_lines as $address_line_key => $address_line) {
+            if ($boundary !== null && $address_line_key >= $boundary) {
+                continue;
             }
+            $this->recipient[] = $address_line;
         }
     }
 
@@ -130,7 +176,6 @@ class AddressExtractor
             if (isset($street_parts['housenumber_addition'])) {
                 $house_number_addition = $street_parts['housenumber_addition'];
             }
-            $this->street_matched = true;
             $this->possible_streets[$address_line_key] = [
                 'street'                => $street,
                 'house_number'          => $house_number,
@@ -145,6 +190,7 @@ class AddressExtractor
         $possible_streets = array_reverse($this->possible_streets, true);
         foreach ($possible_streets as $address_line_key => $possible_street) {
             if ($this->postalcode_line > $address_line_key && $this->street === null) {
+                $this->street_line = $address_line_key;
                 $this->street = $possible_street['street'];
                 $this->house_number = $possible_street['house_number'];
                 $this->house_number_addition = $possible_street['house_number_addition'];

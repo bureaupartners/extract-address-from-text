@@ -73,6 +73,7 @@ final class AddressTest extends TestCase
             'text'   => 'BureauPartners' . PHP_EOL . 'M. Hameetman' . PHP_EOL . 'Pieter Zeemanweg 1 - 75' . PHP_EOL . '3300 AA Dordrecht' . PHP_EOL . 'Nederland',
             'result' => [
                 'recipient'             => [
+                    'BureauPartners',
                     'M. Hameetman',
                 ],
                 'street'                => 'Pieter Zeemanweg',
@@ -87,6 +88,7 @@ final class AddressTest extends TestCase
             'text'   => 'BureauPartners' . PHP_EOL . 'M. Hameetman' . PHP_EOL . '1e Kruisweg 36' . PHP_EOL . '3300 AA Dordrecht' . PHP_EOL . 'Nederland',
             'result' => [
                 'recipient'             => [
+                    'BureauPartners',
                     'M. Hameetman',
                 ],
                 'street'                => '1e Kruisweg',
@@ -176,7 +178,10 @@ final class AddressTest extends TestCase
             'result' => [
                 'recipient'             => [
                     'Nederlandse ambassade in Madrid',
-                    'Jan Versteeg'
+                    'Jan Versteeg',
+                    // Everything above the street line is returned; a line like
+                    // this simply does not match any addressee.
+                    'Torre Espacio - Verdieping 36',
                 ],
                 'street'                => 'Pº de la Castellana',
                 'house_number'          => '259',
@@ -190,7 +195,7 @@ final class AddressTest extends TestCase
             'text' => 'Nederlandse ambassade in Londen' . PHP_EOL . 'Karel J.G. Van Oosterom' . PHP_EOL . '38 Hyde Park Gate' . PHP_EOL . 'Londen SW75DP' . PHP_EOL . 'United Kingdom',
             'result' => [
                 'recipient'             => [
-                    'Nederlandse ambassade in Madrid',
+                    'Nederlandse ambassade in Londen',
                     'Karel J.G. Van Oosterom'
                 ],
                 'street'                => 'Hyde Park Gate',
@@ -356,7 +361,53 @@ final class AddressTest extends TestCase
                 'city'                  => 'Mino',
                 'country'               => 'ES',
             ],
-        ]
+        ],
+        // A company name that contains a number reads as a street ("XYZ P"
+        // with house number 20), but the real street line is the one below it.
+        [
+            'text'   => 'XYZ P20 B.V.' . PHP_EOL . 'POSTBUS 3456' . PHP_EOL . '6677 AA UTRECHT',
+            'result' => [
+                'recipient'             => [
+                    'XYZ P20 B.V.',
+                ],
+                'street'                => 'POSTBUS',
+                'house_number'          => '3456',
+                'house_number_addition' => '',
+                'postalcode'            => '6677AA',
+                'city'                  => 'UTRECHT',
+                'country'               => 'NL',
+            ],
+        ],
+        [
+            'text'   => '7Seven B.V.' . PHP_EOL . 'M. Hameetman' . PHP_EOL . 'Pieter Zeemanweg 175' . PHP_EOL . '3316DD Dordrecht',
+            'result' => [
+                'recipient'             => [
+                    '7Seven B.V.',
+                    'M. Hameetman',
+                ],
+                'street'                => 'Pieter Zeemanweg',
+                'house_number'          => '175',
+                'house_number_addition' => '',
+                'postalcode'            => '3316DD',
+                'city'                  => 'Dordrecht',
+                'country'               => 'NL',
+            ],
+        ],
+        [
+            'text'   => 'BureauPartners B.V.' . PHP_EOL . 'T.a.v. de heer M. Hameetman' . PHP_EOL . 'Pieter Zeemanweg 175' . PHP_EOL . '3316DD Dordrecht',
+            'result' => [
+                'recipient'             => [
+                    'BureauPartners B.V.',
+                    'T.a.v. de heer M. Hameetman',
+                ],
+                'street'                => 'Pieter Zeemanweg',
+                'house_number'          => '175',
+                'house_number_addition' => '',
+                'postalcode'            => '3316DD',
+                'city'                  => 'Dordrecht',
+                'country'               => 'NL',
+            ],
+        ],
     ];
 
     private function getTestAddresses()
@@ -372,11 +423,22 @@ final class AddressTest extends TestCase
         return $this->test_addresses;
     }
 
+    public function testExtractsRecipientFromAddress(): void
+    {
+        foreach ($this->getTestAddresses() as $address) {
+            $extractor = new AddressExtractor($address['text']);
+            $this->assertEquals(
+                $address['result']['recipient'],
+                $extractor->getRecipient(),
+                'Unexpected recipient for: ' . str_replace(PHP_EOL, ' / ', $address['text'])
+            );
+        }
+    }
+
     public function testExtractsStreetFromAddress(): void
     {
         foreach ($this->getTestAddresses() as $address) {
             $extractor = new AddressExtractor($address['text']);
-            print_r($extractor->getAddress());
             $this->assertEquals($address['result']['street'], $extractor->getStreet());
             $this->assertEquals($address['result']['house_number'], $extractor->getHouseNumber());
             $this->assertEquals($address['result']['house_number_addition'], $extractor->getHouseNumberAddition());
