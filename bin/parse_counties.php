@@ -8,6 +8,85 @@ use PragmaRX\Countries\Package\Support\Collection;
 
 include_once __DIR__ . '/../vendor/autoload.php';
 
+const COUNTRIES_FILE = __DIR__ . '/../src/data/countries.json';
+
+/**
+ * Entries that are not a country. "EU" shares its names with France, so
+ * "Frankrijk" came out as EU.
+ */
+const NOT_A_COUNTRY = ['EU'];
+
+/**
+ * Country names that pragmarx/countries does not have. They are written in
+ * the form AddressExtractor compares against: lowercase, without accents and
+ * without dots. They do not go through clean_name(), which would turn the
+ * Greek and Cyrillic names into Latin letters, while an address line keeps
+ * its own script.
+ */
+const COUNTRY_ALIASES = [
+    'uk'                   => 'GB',
+    'england'              => 'GB',
+    'engeland'             => 'GB',
+    'scotland'             => 'GB',
+    'schotland'            => 'GB',
+    'wales'                => 'GB',
+    'northern ireland'     => 'GB',
+    'noord-ierland'        => 'GB',
+    'groot-brittannie'     => 'GB',
+    'groot brittannie'     => 'GB',
+    'grossbritannien'      => 'GB',
+    'faroer'               => 'FO',
+    'faroe'                => 'FO',
+    'faroer eilanden'      => 'FO',
+    'faroer-eilanden'      => 'FO',
+    'holy see'             => 'VA',
+    'heilige stoel'        => 'VA',
+    'citta del vaticano'   => 'VA',
+    'ελλαδα'               => 'GR',
+    'ελλας'                => 'GR',
+    'κυπρος'               => 'CY',
+    'россия'               => 'RU',
+    'российская федерация' => 'RU',
+    'украина'              => 'UA',
+    'украіна'              => 'UA',
+    'беларусь'             => 'BY',
+    'българия'             => 'BG',
+    'србија'               => 'RS',
+    'македонија'           => 'MK',
+    'северна македонија'   => 'MK',
+    'црна гора'            => 'ME',
+    'босна и херцеговина'  => 'BA',
+];
+
+function apply_country_aliases(array $countries): array
+{
+    foreach (NOT_A_COUNTRY as $country_code) {
+        unset($countries[$country_code]);
+    }
+    foreach (COUNTRY_ALIASES as $name => $country_code) {
+        // An alias names one country only.
+        foreach ($countries as $other_code => $names) {
+            if ($other_code !== $country_code && in_array($name, $names, true)) {
+                $countries[$other_code] = array_values(array_diff($names, [$name]));
+                echo 'Removed "' . $name . '" from ' . $other_code . PHP_EOL;
+            }
+        }
+        if (!in_array($name, $countries[$country_code], true)) {
+            $countries[$country_code][] = $name;
+        }
+    }
+    return $countries;
+}
+
+// Re-applies the lists above to the existing countries.json without
+// rebuilding it from pragmarx/countries.
+if (in_array('--aliases-only', $argv, true)) {
+    $countries = apply_country_aliases(json_decode(file_get_contents(COUNTRIES_FILE), true));
+    file_put_contents(COUNTRIES_FILE, json_encode($countries));
+    echo 'Aliases applied to ' . count($countries) . ' countries in src/data/countries.json' . PHP_EOL;
+    exit;
+}
+
 $name_keys = ['name.common', 'name.official', 'alt_spellings', 'name_*'];
 $countries = [];
 
@@ -228,5 +307,7 @@ foreach (Countries::all() as $country) {
     }
 }
 
-file_put_contents(__DIR__ . '/../src/data/countries.json', json_encode($countries));
+$countries = apply_country_aliases($countries);
+
+file_put_contents(COUNTRIES_FILE, json_encode($countries));
 echo count($countries) . ' countries indexed and written to src/data/countries.json' . PHP_EOL;
